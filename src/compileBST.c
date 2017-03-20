@@ -15,8 +15,10 @@
 #include <assert.h>
 #include <string.h>
 
-
-
+/**
+ * Convetir string de longue l en long 
+ */
+long convertirEnLong(char * string, int l);
 /**
  * Main function
  * \brief Main function
@@ -82,9 +84,42 @@ int main (int argc, char *argv[]) {
   freqFile = fopen(argv[2] , "r" );
   if (freqFile==NULL) {fprintf (stderr, "!!!!! Error opening originalFile !!!!!\n"); exit(EXIT_FAILURE);}
 
-  // TO BE COMPLETED 
+/**
+ * Lecture du freqFile pour extraite p[i]
+ * p[i] probabilité d'accèss à l'élément s[i] i=0..n-1
+ */    
+ 
+    long p[n]; // probabilité d'accèss à l'élément s[i] i = 0..n-1
+    int pCourant = 0;
+    char carCourant = fgetc(freqFile); // caractère utilisant pour parcourir la file
+    char motCourant[19]; // 19 car LONG_MAX = 9223372036854775807(19 chiffres)
+    int longue = 0; // compter la longue du mot courrant
+    while(carCourant != EOF){  // on continue jusqu'à EOF
+        if(carCourant == '\n' || carCourant == '\t' || carCourant == ' '){
+            if(longue != 0) {
+                p[pCourant] = convertirEnLong(motCourant,longue);
+                printf("p[%d] = %d  ",pCourant,p[pCourant]); // on l'affiche
+                pCourant++;
+                longue = 0;
+            }
+            
+        } else if(carCourant < 47 || carCourant > 56){
+            fprintf(stderr, "File is invalid\n"); exit(EXIT_FAILURE);
+        } else {
+            motCourant[longue] = carCourant;
+            longue++;
+        }
+        carCourant = fgetc(freqFile); // on lit le caractère
+    }  
+
+  printf("\n");
   fclose(freqFile);
 
 
   return 0;
+}
+
+long convertirEnLong(char * string, int l){
+    if(l == 0) return 0;
+    else return string[l-1]-47 + 10*convertirEnLong(string, l -1);
 }
