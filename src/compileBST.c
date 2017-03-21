@@ -136,32 +136,31 @@ int main (int argc, char *argv[]) {
  */
     float e[n+2][n+1], w[n+1][n+1];
     int r[n+1][n+1];
-    int j,l,k,t;
-    for(i=1;i<n+2;i++)
-    for(j=0;j<n+1;j++)
-        e[i][j] = FLT_MAX;
-    e[n+1][n] = 0;
+    int j,l,k;
+    float t, mint;
     for(i=1; i<n+1;i++){
         e[i][i-1] = 0;
         e[i][i] = p[i-1];
         w[i][i] = p[i-1];
+        printf("%3.2f",e[i][i]);
     }
     for(l=1;l<n;l++)
     for(i=1;i<n-l+1;i++){
         j = i+l;
         w[i][j] = w[i][j-1] + p[j-1];
+        mint = FLT_MAX;
         for(k=i;k<j+1;k++){
             t = e[i][k-1] + e[k+1][j] + w[i][j];
-            if(t<e[i][j]) {
+            if(t<mint) {
+                mint = t;
                 e[i][j] = t;
                 r[i-1][j-1] = k-1;
             }
         }
     }
-
     for(i=0;i<n;i++)
     for(j=i+1;j<n;j++)
-        printf("racine(%d,%d) = %d   ", i, j, r[i][j]);
+        printf("racine(%d,%d) = %d e[%d][%d] = %f,     ", i, j, r[i][j],i,j, e[i+1][j+1]);
 
     printf("\n");
   fclose(freqFile);
