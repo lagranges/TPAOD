@@ -125,6 +125,7 @@ int main (int argc, char *argv[]) {
     for(i=0; i<n ; i++) p[i] = ((float) o[i])/sommeO;
     for(i=0; i<n ; i++) printf("p[%d] = %5.5f ",i,p[i]);
     printf("\n");
+    fclose(freqFile);
 
 /**
  * Arbre Binaire de Recherche Optimal
@@ -163,7 +164,60 @@ int main (int argc, char *argv[]) {
         printf("racine(%d,%d) = %d e[%d][%d] = %f,     ", i, j, r[i][j],i,j, e[i+1][j+1]);
 
     printf("\n");
-  fclose(freqFile);
+
+/**
+ * Ecrire l'arbre optimal au-dessus sur fichier .c
+ *
+ */
+    int BSTtree[n][2];
+    for(i=0;i<n;i++){
+        BSTtree[i][0] = -1;
+        BSTtree[i][1] = -1;
+    }
+    for(i=0;i<n;i++)
+        r[i][i] = i;
+    void sousFonction(int start,int end){
+        int parcourir = r[start][end];
+        if(start == end) {
+            BSTtree[start][0] = -1;
+            BSTtree[end][1] = -1;
+        } else if(parcourir == start){
+            BSTtree[parcourir][1] = r[parcourir+1][end];
+            BSTtree[parcourir][0] = -1;
+            sousFonction(parcourir+1, end);
+        } else if(parcourir == end){
+            BSTtree[parcourir][0] = r[start][parcourir-1];
+            BSTtree[parcourir][1] = -1;
+            sousFonction(start, parcourir-1);
+        } else {
+            BSTtree[parcourir][0] = r[start][parcourir-1];
+            BSTtree[parcourir][1] = r[parcourir+1][end];
+            sousFonction(parcourir+1, end);
+            sousFonction(start, parcourir-1);
+        }
+    }    
+    sousFonction(0,n-1);
+    FILE * fichierArbre = NULL;
+    char * nomFichier = strcat(argv[2],"_arbre.c");
+    fichierArbre = fopen(nomFichier,"w");
+    if (freqFile==NULL) {
+        fprintf (stderr, "Error opening File \n"); // TODO 
+        exit(EXIT_FAILURE);
+    }
+    fprintf(fichierArbre,"static int BSTroot = %d;\n", r[0][n-1]); 
+    fprintf(fichierArbre,"static int BSTtree[%d][2] = {",n);
+    for(i=0;i<n;i++){
+        fprintf(fichierArbre,"{");
+        fprintf(fichierArbre,"%d",BSTtree[i][0]);
+        fprintf(fichierArbre,",");
+        fprintf(fichierArbre,"%d",BSTtree[i][1]);
+        fprintf(fichierArbre,"}");
+        if(i!=n-1)
+            fprintf(fichierArbre,",");
+    }
+    fprintf(fichierArbre,"};",n);
+
+    fclose(fichierArbre);
   return 0;
 }
 
