@@ -16,10 +16,37 @@
 #include <string.h>
 #include <float.h>
 
+int **e;
+int **r;
+int **BSTtree;
 /**
- * Convetir string de longue l en long 
+ * mise à jour les valeur de BSTtree[][]
+ * mise à jour les fils gauche et droite de racine(start, end) (= r) 
+ * file gauche = racince(start, r-1)
+ * file droit = racince(r+1, end)
+ * après parcourir pour mittre sous-espace
  */
-long convertirEnLong(char * string, int l);
+void sousFonction(int start,int end){
+    int parcourir = r[start][end];
+    if(start == end) {
+        BSTtree[start][0] = -1;
+        BSTtree[end][1] = -1;
+    } else if(parcourir == start){
+        BSTtree[parcourir][1] = r[parcourir+1][end];
+        BSTtree[parcourir][0] = -1;
+        sousFonction(parcourir+1, end);
+    } else if(parcourir == end){
+        BSTtree[parcourir][0] = r[start][parcourir-1];
+        BSTtree[parcourir][1] = -1;
+        sousFonction(start, parcourir-1);
+    } else {
+        BSTtree[parcourir][0] = r[start][parcourir-1];
+        BSTtree[parcourir][1] = r[parcourir+1][end];
+        sousFonction(parcourir+1, end);
+        sousFonction(start, parcourir-1);
+    }
+}    
+
 /**
  * Main function
  * \brief Main function
@@ -90,42 +117,18 @@ int main (int argc, char *argv[]) {
  * p[i] probabilité d'accèss à l'élément s[i] i=0..n-1
  */    
  
-    long o[n]; // probabilité d'accèss à l'élément i i = 0..n-1
-    int oCourant = 0;
-    char carCourant = fgetc(freqFile); // caractère utilisant pour parcourir la file
-    char motCourant[19]; // 19 car LONG_MAX = 9223372036854775807(19 chiffres)
-    int longue = 0; // compter la longue du mot courrant
-    while(carCourant != EOF && oCourant<n){  // on continue jusqu'à EOF
-        if(carCourant == '\n' || carCourant == '\t' || carCourant == ' '){
-            if(longue != 0) {
-                o[oCourant] = convertirEnLong(motCourant,longue);
-                printf("o[%d] = %d  ",oCourant,o[oCourant]); // on l'affiche  
-                oCourant++;
-                longue = 0;
-            }
-            
-        } else if(carCourant < 47 || carCourant > 56){
-            fprintf(stderr, "File is invalid\n"); exit(EXIT_FAILURE); // TODO
-        } else {
-            motCourant[longue] = carCourant;
-            longue++;
-        }
-        carCourant = fgetc(freqFile); // on lit le caractère
-    }  
-    printf("\n");
-    // Si le nombre de numéros lu est inférieur à n  
-    if(oCourant != n){
-        fprintf(stderr, "File is invalid\n"); exit(EXIT_FAILURE); exit(EXIT_FAILURE); //TODO
+    int p[n]; // probabilité d'accèss à l'élément i i = 0..n-1
+    int i;
+    for(i=0;i<n;i++){
+        fscanf(freqFile,"%d",&p[i]);
     }
     // Caculer p[i]
-    float p[n];
-    int i;
-    unsigned long sommeO = 0;
-    for(i=0; i<n ; i++) sommeO += o[i];
-    for(i=0; i<n ; i++) p[i] = ((float) o[i])/sommeO;
-    for(i=0; i<n ; i++) printf("p[%d] = %5.5f ",i,p[i]);
-    printf("\n");
+//    float p[n];
+//    unsigned long sommeO = 0;
+//    for(i=0; i<n ; i++) sommeO += o[i];
+//    for(i=0; i<n ; i++) p[i] = ((float) o[i])/sommeO;
     fclose(freqFile);
+
 
 /**
  * Arbre Binaire de Recherche Optimal
@@ -135,93 +138,84 @@ int main (int argc, char *argv[]) {
  * r[i][j] la racine de l'arbre Tij;
  * e[i][j] le coût de l'arbre Tij
  */
-    float e[n+2][n+1], w[n+1][n+1];
-    int r[n+1][n+1];
-    int j,l,k;
-    float t, mint;
+    int w[n+1];
+    int j,l,k,m;
+    int t, mint;
+    r = malloc(n*sizeof(int *));
+    for(i = 0; i< n; i++)
+        r[i] = (int *)malloc(n*sizeof(int));
+    e = malloc((n+2)*sizeof(int *));
+    for(i = 0; i< n+2; i++)
+        e[i] = (int *)malloc((n+1)*sizeof(int));
+
+    // initialiser 
+    for(i=0;i<n;i++)
+        r[i][i] = i;
+
     for(i=1; i<n+1;i++){
         e[i][i-1] = 0;
         e[i][i] = p[i-1];
-        w[i][i] = p[i-1];
-        printf("%3.2f",e[i][i]);
+        w[i] = w[i-1] + p[i-1];
     }
+    //printf("\n[TRACE]\n");
     for(l=1;l<n;l++)
     for(i=1;i<n-l+1;i++){
         j = i+l;
-        w[i][j] = w[i][j-1] + p[j-1];
-        mint = FLT_MAX;
-        for(k=i;k<j+1;k++){
-            t = e[i][k-1] + e[k+1][j] + w[i][j];
+        mint = INT_MAX;
+        //m = r[i-1][j-2];
+        for(k=r[i-1][j-2]+1;k<r[i][j-1]+2;k++){
+            // déterminer k pour que la valeur de e[i][j] soit minimal
+            t = e[i][k-1] + e[k+1][j];
             if(t<mint) {
                 mint = t;
-                e[i][j] = t;
-                r[i-1][j-1] = k-1;
+                m = k;
             }
         }
+        e[i][j] = mint + w[j] - w[i-1];
+        r[i-1][j-1] = m-1;
     }
-    for(i=0;i<n;i++)
-    for(j=i+1;j<n;j++)
-        printf("racine(%d,%d) = %d e[%d][%d] = %f,     ", i, j, r[i][j],i,j, e[i+1][j+1]);
-
-    printf("\n");
 
 /**
  * Ecrire l'arbre optimal au-dessus sur fichier .c
  *
  */
-    int BSTtree[n][2];
+    BSTtree = malloc(n*sizeof(int *));
+    for(i = 0; i< n; i++)
+        BSTtree[i] = (int *)malloc(2*sizeof(int));
     for(i=0;i<n;i++){
         BSTtree[i][0] = -1;
         BSTtree[i][1] = -1;
     }
-    for(i=0;i<n;i++)
-        r[i][i] = i;
-    void sousFonction(int start,int end){
-        int parcourir = r[start][end];
-        if(start == end) {
-            BSTtree[start][0] = -1;
-            BSTtree[end][1] = -1;
-        } else if(parcourir == start){
-            BSTtree[parcourir][1] = r[parcourir+1][end];
-            BSTtree[parcourir][0] = -1;
-            sousFonction(parcourir+1, end);
-        } else if(parcourir == end){
-            BSTtree[parcourir][0] = r[start][parcourir-1];
-            BSTtree[parcourir][1] = -1;
-            sousFonction(start, parcourir-1);
-        } else {
-            BSTtree[parcourir][0] = r[start][parcourir-1];
-            BSTtree[parcourir][1] = r[parcourir+1][end];
-            sousFonction(parcourir+1, end);
-            sousFonction(start, parcourir-1);
-        }
-    }    
+    
+    
     sousFonction(0,n-1);
+
     FILE * fichierArbre = NULL;
+    // le nom du Fichier généré formé nomSource_arbre.c
     char * nomFichier = strcat(argv[2],"_arbre.c");
+    // creer fichier sous nom nomFichier
     fichierArbre = fopen(nomFichier,"w");
     if (freqFile==NULL) {
         fprintf (stderr, "Error opening File \n"); // TODO 
         exit(EXIT_FAILURE);
     }
+    // écire les arbres
+    // La racine de l'arbre
     fprintf(fichierArbre,"static int BSTroot = %d;\n", r[0][n-1]); 
-    fprintf(fichierArbre,"static int BSTtree[%d][2] = {",n);
+    // La valeur de BST
+    fprintf(fichierArbre,"static int BSTtree[%ld][2] = {\n",n);
     for(i=0;i<n;i++){
         fprintf(fichierArbre,"{");
         fprintf(fichierArbre,"%d",BSTtree[i][0]);
         fprintf(fichierArbre,",");
         fprintf(fichierArbre,"%d",BSTtree[i][1]);
         fprintf(fichierArbre,"}");
+        // sans ',' pour le dernier élément
         if(i!=n-1)
-            fprintf(fichierArbre,",");
+            fprintf(fichierArbre,",\n");
     }
-    fprintf(fichierArbre,"};",n);
-
+    fprintf(fichierArbre,"};");
     fclose(fichierArbre);
   return 0;
 }
 
-long convertirEnLong(char * string, int l){
-    if(l == 0) return 0;
-    else return string[l-1]-48 + 10*convertirEnLong(string, l -1);
-}
