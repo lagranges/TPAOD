@@ -9,8 +9,11 @@ do
     outfile="${infile%.in}".out
     outfile=$(tail -n +2 "$outfile") #on supprime la premiere ligne
     res=$(./bin/compileBST "$nb_elt" "$infile")
+    outfile=${outfile%static int opt*}
     outfile=${outfile// /} #On supprime les espaces
+    outfile=$(echo $outfile | tr -d '\r') #on supprime les retour à la ligne
     res=${res// /} #On supprime les espaces
+    res=$(echo $res | tr -d '\r') #on supprime les retour à la ligne
     if [ "$res" == "$outfile" ]
     then
 	echo -e "\033[32m[PASSED] \033[0m $infile)" #resultat = expected
