@@ -133,11 +133,6 @@ int main (int argc, char *argv[]) {
     for(i=0;i<n;i++){
         fscanf(freqFile,"%d",&p[i]);
     }
-    // Caculer p[i]
-//    float p[n];
-//    unsigned long sommeO = 0;
-//    for(i=0; i<n ; i++) sommeO += o[i];
-//    for(i=0; i<n ; i++) p[i] = ((float) o[i])/sommeO;
     fclose(freqFile);
 
 
@@ -201,7 +196,7 @@ int main (int argc, char *argv[]) {
     
     sousFonction(0,n-1);
 
-    FILE * fichierArbre = NULL;
+    /*FILE * fichierArbre = NULL;
     // le nom du Fichier généré formé nomSource_arbre.c
     char * nomFichier = strcat(argv[2],"_arbre.c");
     // creer fichier sous nom nomFichier
@@ -209,24 +204,23 @@ int main (int argc, char *argv[]) {
     if (freqFile==NULL) {
         fprintf (stderr, "Error opening File \n"); // TODO 
         exit(EXIT_FAILURE);
-    }
+    }*/
     // écire les arbres
     // La racine de l'arbre
-    fprintf(fichierArbre,"static int BSTroot = %d;\n", r[0][n-1]); 
+    printf("static int BSTroot = %d;\n", r[0][n-1]); 
     // La valeur de BST
-    fprintf(fichierArbre,"static int BSTtree[%ld][2] = {\n",n);
+    printf("static int BSTtree[%ld][2] = {\n",n);
     for(i=0;i<n;i++){
-        fprintf(fichierArbre,"{");
-        fprintf(fichierArbre,"%d",BSTtree[i][0]);
-        fprintf(fichierArbre,",");
-        fprintf(fichierArbre,"%d",BSTtree[i][1]);
-        fprintf(fichierArbre,"}");
+        printf("{");
+        printf("%d",BSTtree[i][0]);
+        printf(",");
+        printf("%d",BSTtree[i][1]);
+        printf("}");
         // sans ',' pour le dernier élément
         if(i!=n-1)
-            fprintf(fichierArbre,",\n");
+            printf(",\n");
     }
-    fprintf(fichierArbre,"};");
-    fclose(fichierArbre);
+    printf("};");
   return 0;
 }
 
