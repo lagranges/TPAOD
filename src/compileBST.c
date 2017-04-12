@@ -213,14 +213,14 @@ int main (int argc, char *argv[]) {
     for(i=0;i<n;i++){
         printf("{");
         printf("%d",BSTtree[i][0]);
-        printf(",");
+        printf(", ");
         printf("%d",BSTtree[i][1]);
         printf("}");
         // sans ',' pour le dernier élément
         if(i!=n-1)
             printf(",\n");
     }
-    printf("};");
+    printf(" };");
   return 0;
 }
 
