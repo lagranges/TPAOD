@@ -20,29 +20,40 @@ int **e;
 int **r;
 int **BSTtree;
 /**
- * mise à jour les valeur de BSTtree[][]
- * mise à jour les fils gauche et droite de racine(start, end) (= r) 
+ * utilisé pour mettre à jour les valeur de BSTtree[][]
+ * mise à jour les fils gauche et droite de racine(start, end) 
  * file gauche = racince(start, r-1)
  * file droit = racince(r+1, end)
- * après parcourir pour mittre sous-espace
+ * après parcourir pour mettre sous-arbre à jour
  */
 void sousFonction(int start,int end){
     int parcourir = r[start][end];
+    // arbre soit une racine unique
     if(start == end) {
         BSTtree[start][0] = -1;
         BSTtree[end][1] = -1;
-    } else if(parcourir == start){
+    } 
+    // arbre droite soit une racine unique  
+    else if(parcourir == start){
         BSTtree[parcourir][1] = r[parcourir+1][end];
         BSTtree[parcourir][0] = -1;
+        // on parcourt à gauche
         sousFonction(parcourir+1, end);
-    } else if(parcourir == end){
+    } 
+    // arbre gauche soit une racine unique
+    else if(parcourir == end){
         BSTtree[parcourir][0] = r[start][parcourir-1];
         BSTtree[parcourir][1] = -1;
+        // on parcourt à droit
         sousFonction(start, parcourir-1);
-    } else {
+    } 
+    // sinon
+    else {
         BSTtree[parcourir][0] = r[start][parcourir-1];
         BSTtree[parcourir][1] = r[parcourir+1][end];
+        // on parcourt à droit
         sousFonction(parcourir+1, end);
+        // on parcourt à gauche
         sousFonction(start, parcourir-1);
     }
 }    
@@ -162,7 +173,7 @@ int main (int argc, char *argv[]) {
     for(i=1;i<n-l+1;i++){
         j = i+l;
         mint = INT_MAX;
-        //m = r[i-1][j-2];
+        // Attention: r[i][j-1] <= r[i][j] <= r[i+1][j]
         for(k=r[i-1][j-2]+1;k<r[i][j-1]+2;k++){
             // déterminer k pour que la valeur de e[i][j] soit minimal
             t = e[i][k-1] + e[k+1][j];
