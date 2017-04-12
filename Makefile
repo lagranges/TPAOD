@@ -32,6 +32,9 @@ report: $(PDF)
 
 doc: $(DOCDIR)/index.html
 
+test: test_auto.sh
+	./test_auto.sh
+
 clean:
 	rm -rf $(DOCDIR) $(BINDIR)/* $(REPORTDIR)/*.aux $(REPORTDIR)/*.log  $(REPORTDIR)/rapport.pdf 
 

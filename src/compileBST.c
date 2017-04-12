@@ -218,7 +218,7 @@ int main (int argc, char *argv[]) {
         printf("}");
         // sans ',' pour le dernier élément
         if(i!=n-1)
-            printf(",\n");
+            printf(", \n");
     }
     printf(" };");
   return 0;
