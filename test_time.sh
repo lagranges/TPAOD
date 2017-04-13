@@ -4,7 +4,7 @@
 # Version initiale : 12/04/2017
 
 
-printf "                          MOY   MIN   MAX\n"
+printf "                          MIN   MAX   MOY  (en ms)\n"
 
 for infile in `find benchmarks/ -name "*.in" | sort`
 do
@@ -45,8 +45,8 @@ do
     done
 
     printf "$infile  "
-    printf "$moy     "
     printf "$min     "
-    printf "$max     \n"
+    printf "$max     "
+    printf "$moy     \n"
 
 done
