@@ -8,7 +8,7 @@ do
     nb_elt=$(wc -w "$infile" | awk '{print $1;}')
     outfile="${infile%.in}".out
     outfile=$(tail -n +2 "$outfile") #on supprime la premiere ligne
-    res=$(./bin/compileBST "$nb_elt" "$infile" 2> /dev/null )
+    res=$(./bin/compileABROpt "$nb_elt" "$infile" 2> /dev/null )
     outfile=${outfile%static int opt*}
     outfile=${outfile// /} #On supprime les espaces
     outfile=$(echo $outfile | tr -d '\r') #on supprime les retour à la ligne

@@ -8,7 +8,7 @@ do_test(){
     local infile=$1
     local nb_elt=$2
     local test
-    test=$( /usr/bin/time -f "%e" ./bin/compileBST "$nb_elt" "$infile"  2>&1 1>/dev/null  | cut -d ' ' -f 8- ) 
+    test=$( /usr/bin/time -f "%e" ./bin/compileABROpt "$nb_elt" "$infile"  2>&1 1>/dev/null  | cut -d ' ' -f 8- ) 
     test=${test//.} #on supprime le point
     test=$(echo "$test" | sed 's/^0*//')  #on supprime les zeros en tete
     test+='0' #on convertit en millisecondes

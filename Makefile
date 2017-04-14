@@ -10,14 +10,14 @@ DOCDIR=$(REFDIR)/doc
 REPORTDIR=$(REFDIR)/rapport
 
 LATEXSOURCE=$(wildcard $(REPORTDIR)/*.tex)
-CSOURCE=$(wildcard $(SRCDIR)/compileBST.c)
+CSOURCE=$(wildcard $(SRCDIR)/compileABROpt.c)
 PDF=$(LATEXSOURCE:.tex=.pdf)
 
 
 all: binary report doc 
 
 
-$(BINDIR)/compileBST: $(CSOURCE)
+$(BINDIR)/compileABROpt: $(CSOURCE)
 	$(CC) $(CFLAGS)  $^ -o $@
 
 %.pdf: $(LATEXSOURCE)
@@ -26,7 +26,7 @@ $(BINDIR)/compileBST: $(CSOURCE)
 $(DOCDIR)/index.html: $(SRCDIR)/Doxyfile $(CSOURCE) 
 	$(DOCC) $(SRCDIR)/Doxyfile
 
-binary: $(BINDIR)/compileBST
+binary: $(BINDIR)/compileABROpt
 
 report: $(PDF) 
 
